@@ -1,6 +1,6 @@
 // review.schema.ts
 import { Schema, Document, Types } from 'mongoose';
-import { Game } from 'games/game.schema';  // Asegúrate de importar el esquema de Game
+import { Game } from 'src/reviews_and_ratings/games/game.schema';  // Asegúrate de importar el esquema de Game
 
 // Definición de la interfaz para la reseña
 export interface ReviewDocument extends Document {

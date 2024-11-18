@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ReviewsModule } from 'reviews/reviews.module';
+import { ReviewsModule } from 'src/reviews_and_ratings/reviews/reviews.module';
 import { ForumModule } from './forum/forum.module';
 
 @Module({

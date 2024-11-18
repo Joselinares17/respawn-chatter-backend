@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ReviewsService } from './reviews.service';
 import { ReviewsController } from './reviews.controller';
 import { ReviewSchema } from './review.schema';
-import { GameSchema } from 'games/game.schema';
+import { GameSchema } from 'src/reviews_and_ratings/games/game.schema';
 
 @Module({
   imports: [
