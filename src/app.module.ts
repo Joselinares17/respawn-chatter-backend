@@ -5,7 +5,7 @@ import { ForumModule } from './forum/forum.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/gameReviewsDB'),
+    MongooseModule.forRoot('mongodb+srv://admin:admin@clusterarquitecturasoft.4hnsp.mongodb.net/gameReviewsDB?retryWrites=true&w=majority&appName=ClusterArquitecturaSoftware'),
     ReviewsModule, // Asegúrate de importar el módulo de reseñas aquí
     ForumModule
   ],
