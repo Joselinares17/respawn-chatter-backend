@@ -18,6 +18,12 @@ export class ReviewsController {
     return this.reviewsService.getReviewsByUser(userId);  // Llamamos al servicio con el userId
   }
 
+  // Obtener reseñas por usuario
+  @Get('game/:gameId')
+  async getReviewsByGame(@Param('gameId') gameId: string): Promise<ReviewDocument[]> {
+    return this.reviewsService.getReviewsByGame(gameId);  // Llamamos al servicio con el userId
+  }
+
   // Obtener una reseña por ID
   @Get(':id')
   async getReviewById(@Param('id') id: string): Promise<ReviewDocument> {

@@ -28,6 +28,14 @@ export class ReviewsService {
     return reviews;
   }
 
+  async getReviewsByGame(gameId: string): Promise<ReviewDocument[]> {
+    const reviews = await this.reviewModel
+      .find({ gameId })
+      .populate('gameId') // Rellenamos con la información del juego
+      .exec();
+    return reviews;
+  }
+
   // Obtener una reseña por ID con datos del juego
   async getReviewById(id: string): Promise<ReviewDocument> {
     return this.reviewModel
