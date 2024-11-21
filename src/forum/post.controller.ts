@@ -1,11 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch,
+  HttpException, HttpStatus } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { CreateCommentDto } from './dtos/create-comment.dto';
@@ -17,8 +11,29 @@ export class PostController {
 
   // 1. Crear un nuevo post
   @Post()
-  async createPost(@Body() createPostDto: CreatePostDto) {
-    return this.postService.createPost(createPostDto);
+  async createPost(
+    @Body('title') title: string,
+    @Body('content') content: string,
+    @Body('tags') tags: string[],
+  ) {
+    const result = await this.postService.createPost(title, content, tags);
+
+    if (result.error) {
+      // Lanzar un error con mensaje personalizado para el usuario
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: result.error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Retornar el post creado si todo es correcto
+    return {
+      message: 'Post creado exitosamente.',
+      post: result.post,
+    };
   }
 
   // 2. Obtener todos los posts
@@ -34,12 +49,13 @@ export class PostController {
   }
 
   // 4. Añadir un comentario a un post
+  //TODO: Arreglar el tipo del createComment(x, [y]) 
   @Post(':postId/comments')
   async addComment(
     @Param('postId') postId: string,
     @Body() createCommentDto: CreateCommentDto,
   ) {
-    return this.postService.addComment(postId, createCommentDto);
+    return this.postService.createComment(postId, createCommentDto);
   }
 
   // 4.1 Obtener una lista de todos los comentarios referidos a un post
