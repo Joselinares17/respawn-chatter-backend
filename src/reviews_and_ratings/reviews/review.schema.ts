@@ -20,7 +20,7 @@ export const ReviewSchema = new Schema<ReviewDocument>({
   reviewText: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-});
+}, { versionKey: false });
 
 // Exportación del modelo 'Review' y del esquema
 export const Review = 'Review'; // 'Review' es el nombre del modelo

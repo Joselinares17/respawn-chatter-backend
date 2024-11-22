@@ -47,6 +47,7 @@ export class ReviewsService {
   // Crear una nueva reseña
   async createReview(createReviewDto: any): Promise<ReviewDocument> {
     const createdReview = new this.reviewModel(createReviewDto);
+    console.log(createdReview);
     return createdReview.save();
   }
 

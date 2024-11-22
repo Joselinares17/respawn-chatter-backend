@@ -5,16 +5,23 @@ import { ReviewsModule } from 'src/reviews_and_ratings/reviews/reviews.module';
 import { ForumModule } from './forum/forum.module';
 import { GamesModule } from './reviews_and_ratings/games/games.module';
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
+      envFilePath: './Datos.env',
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_FORUM'),
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const uri = configService.get<string>('MONGODB_FORUM');
+        console.log('MONGODB_FORUM:', uri); // Esto debería imprimir tu URI de MongoDB
+        if (!uri) {
+          throw new Error('La variable de entorno MONGODB_FORUM no está configurada.');
+        }
+        return { uri };
+      },
       inject: [ConfigService],
       connectionName: 'forum',
     }),
