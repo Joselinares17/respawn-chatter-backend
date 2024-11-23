@@ -19,6 +19,6 @@ export const GameSchema = new Schema<GameDocument>({
   platforms: { type: [String], required: true },
   createdAt: { type: Date, default: Date.now },
   image: { type: String, required: false },
-});
+}, { versionKey: false });
 
 export const Game = model<GameDocument>('Game', GameSchema); // El nombre del modelo

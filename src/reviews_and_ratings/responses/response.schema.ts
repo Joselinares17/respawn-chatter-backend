@@ -16,4 +16,4 @@ export const ResponseSchema = new Schema<ResponseDocument>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   responseText: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-});
+}, { versionKey: false });

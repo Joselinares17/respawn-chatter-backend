@@ -6,7 +6,7 @@ import { ForumModule } from './forum/forum.module';
 import { GamesModule } from './reviews_and_ratings/games/games.module';
 import { ResponsesModule } from './reviews_and_ratings/responses/responses.module';
 import { UsersModule } from './reviews_and_ratings/users/users.module';
-
+import { GoogleContentSafetyModule } from './google-content-safety/google-content-safety.module';
 
 @Module({
   imports: [
@@ -32,7 +32,8 @@ import { UsersModule } from './reviews_and_ratings/users/users.module';
     GamesModule,
     ResponsesModule,
     UsersModule,
-    ForumModule
+    ForumModule,
+    GoogleContentSafetyModule
   ],
 })
 export class AppModule {}

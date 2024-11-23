@@ -22,15 +22,18 @@ export class ResponsesService {
   ) {
     // Construir el filtro dinámico según los parámetros
     const filter: FilterQuery<ResponseDocument> = {};
-
+  
     if (parentReviewId) {
       filter.parentReviewId = parentReviewId;
+  
+      // Asegurarse de que `parentResponseId` no exista
+      filter.parentResponseId = { $in: [null, undefined] };
     }
-
+  
     if (parentResponseId) {
       filter.parentResponseId = parentResponseId;
     }
-
+  
     // Realizar la consulta con el filtro dinámico
     return this.responseModel.find(filter).populate('userId', 'username email').exec();
   }
