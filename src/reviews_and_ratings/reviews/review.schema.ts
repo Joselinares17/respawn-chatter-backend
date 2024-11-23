@@ -14,7 +14,7 @@ export interface ReviewDocument extends Document {
 
 // Definición del esquema de la reseña
 export const ReviewSchema = new Schema<ReviewDocument>({
-  userId: { type: Schema.Types.ObjectId, required: true },
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   gameId: { type: Schema.Types.ObjectId, ref: 'Game', required: true },  // Referencia a 'Game'
   rating: { type: Number, required: true },
   reviewText: { type: String, required: true },

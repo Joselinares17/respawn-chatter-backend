@@ -4,6 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ReviewsModule } from 'src/reviews_and_ratings/reviews/reviews.module';
 import { ForumModule } from './forum/forum.module';
 import { GamesModule } from './reviews_and_ratings/games/games.module';
+import { ResponsesModule } from './reviews_and_ratings/responses/responses.module';
+import { UsersModule } from './reviews_and_ratings/users/users.module';
 
 
 @Module({
@@ -28,6 +30,8 @@ import { GamesModule } from './reviews_and_ratings/games/games.module';
     MongooseModule.forRoot('mongodb+srv://admin:admin@clusterarquitecturasoft.4hnsp.mongodb.net/gameReviewsDB?retryWrites=true&w=majority&appName=ClusterArquitecturaSoftware'),
     ReviewsModule, // Asegúrate de importar el módulo de reseñas aquí
     GamesModule,
+    ResponsesModule,
+    UsersModule,
     ForumModule
   ],
 })
