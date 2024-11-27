@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Param, Patch,
   HttpException, HttpStatus } from '@nestjs/common';
 import { PostService } from './post.service';
-import { CreatePostDto } from './dtos/create-post.dto';
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { CreateReplyDto } from './dtos/create-reply.dto';
 
@@ -55,7 +54,24 @@ export class PostController {
     @Param('postId') postId: string,
     @Body() createCommentDto: CreateCommentDto,
   ) {
-    return this.postService.createComment(postId, createCommentDto);
+    const result = await this.postService.createComment(postId, createCommentDto);
+
+    if (result.error) {
+      // Lanzar un error con mensaje personalizado para el usuario
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: result.error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Retornar el post creado si todo es correcto
+    return {
+      message: 'Comment creado exitosamente.',
+      post: result.comment,
+    };
   }
 
   // 4.1 Obtener una lista de todos los comentarios referidos a un post
@@ -73,7 +89,24 @@ export class PostController {
     @Param('commentId') commentId: string,
     @Body() createReplyDto: CreateReplyDto,
   ) {
-    return this.postService.addReply(commentId, createReplyDto);
+    const result = await this.postService.createReply(commentId, createReplyDto);
+
+    if (result.error) {
+      // Lanzar un error con mensaje personalizado para el usuario
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: result.error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Retornar el post creado si todo es correcto
+    return {
+      message: 'Reply creado exitosamente.',
+      post: result.reply,
+    };
   }
 
   // 6. Incrementar vistas de un post

@@ -10,7 +10,7 @@ export class ContentModerationService {
    * @param content Textos a analizar (título, contenido, tags)
    * @returns Resultado de la moderación (es seguro o no y categorías inseguras si existen)
    */
-  async moderateContent(content: string[]): Promise<{ isSafe: boolean; unsafeCategories?: string }> {
+  async moderateContent(content: any): Promise<{ isSafe: boolean; unsafeCategories?: string }> {
     const analysisResult = await this.contentSafetyService.analyzeText(content.join('\n---\n'));
 
     if (!analysisResult.isSafe) {

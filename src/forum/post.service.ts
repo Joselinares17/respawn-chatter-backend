@@ -5,6 +5,7 @@ import { Post } from './schemas/post.schema';
 import { Comment, Reply } from './schemas/comment.schema';
 import { CreateReplyDto } from './dtos/create-reply.dto';
 import { ContentModerationService } from './content-moderation.service';
+import { CreateCommentDto } from './dtos/create-comment.dto';
 
 @Injectable()
 export class PostService {
@@ -56,24 +57,25 @@ export class PostService {
   
 
   // Agregar un comentario a un post
-  async createComment(postId: string, content: string): Promise<{ comment?: Comment; error?: string }> {
+  async createComment(postId: string, request: CreateCommentDto): Promise<{ comment?: Comment; error?: string }> {
+    const { content, author } = request
     const moderationResult = await this.contentModerationService.moderateContent([content]);
   
     if (!moderationResult.isSafe) {
       return { error: `El comentario no pasó la moderación. Categorías inseguras detectadas: ${moderationResult.unsafeCategories}` };
     }
   
-    const comment = new this.commentModel({ postId, content});
+    const comment = new this.commentModel({ postId, request});
     return { comment: await comment.save() };
   }
 
   // Agregar una respuesta a un comentario
-  async createReply(commentId: string, content: string, author: string): Promise<{ reply?: Reply; error?: string }> {
-    // Moderar el contenido de la respuesta
+  async createReply(commentId: string, request: CreateReplyDto): Promise<{ reply?: Reply; error?: string }> {
+    const { content, author } = request
+
     const moderationResult = await this.contentModerationService.moderateContent([content]);
   
     if (!moderationResult.isSafe) {
-      // Retornar un error con las categorías inseguras detectadas
       return { error: `La respuesta no pasó la moderación. Categorías inseguras detectadas: ${moderationResult.unsafeCategories}` };
     }
   
