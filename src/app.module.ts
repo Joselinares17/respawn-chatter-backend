@@ -7,6 +7,7 @@ import { GamesModule } from './reviews_and_ratings/games/games.module';
 import { ResponsesModule } from './reviews_and_ratings/responses/responses.module';
 import { UsersModule } from './reviews_and_ratings/users/users.module';
 import { GoogleContentSafetyModule } from './google-content-safety/google-content-safety.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -31,9 +32,10 @@ import { GoogleContentSafetyModule } from './google-content-safety/google-conten
     ReviewsModule, // Asegúrate de importar el módulo de reseñas aquí
     GamesModule,
     ResponsesModule,
-    UsersModule,
     ForumModule,
-    GoogleContentSafetyModule
+    GoogleContentSafetyModule,
+    UsersModule,
+    AuthModule
   ],
 })
 export class AppModule {}
