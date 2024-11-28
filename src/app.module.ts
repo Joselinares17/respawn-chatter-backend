@@ -12,19 +12,13 @@ import { CustomThrottlerGuard } from './forum/guards/custom-throttler.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: './Datos.env',
+      isGlobal: true
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        const uri = configService.get<string>('MONGODB_FORUM');
-        console.log('MONGODB_FORUM:', uri); // Esto debería imprimir tu URI de MongoDB
-        if (!uri) {
-          throw new Error('La variable de entorno MONGODB_FORUM no está configurada.');
-        }
-        return { uri };
-      },
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_FORUM'),
+      }),
       inject: [ConfigService],
       connectionName: 'forum',
     }),
