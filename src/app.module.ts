@@ -21,7 +21,7 @@ import { CustomThrottlerGuard } from './forum/guards/custom-throttler.guard';
       inject: [ConfigService],
       connectionName: 'forum',
     }),
-    MongooseModule.forRoot('------'),
+    MongooseModule.forRoot('mongodb+srv://admin:admin@clusterarquitecturasoft.4hnsp.mongodb.net/gameReviewsDB?retryWrites=true&w=majority&appName=ClusterArquitecturaSoftware'),
     ReviewsModule,
     GamesModule,
     ForumModule,
