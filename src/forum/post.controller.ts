@@ -3,6 +3,8 @@ import { Controller, Get, Post, Body, Param, Patch,
 import { PostService } from './post.service';
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { CreateReplyDto } from './dtos/create-reply.dto';
+import { Throttle, ThrottlerModuleOptions } from '@nestjs/throttler';
+
 
 @Controller('posts')
 export class PostController {
@@ -37,6 +39,7 @@ export class PostController {
 
   // 2. Obtener todos los posts
   @Get()
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   async getAllPosts() {
     return this.postService.getAllPosts();
   }
@@ -48,7 +51,6 @@ export class PostController {
   }
 
   // 4. Añadir un comentario a un post
-  //TODO: Arreglar el tipo del createComment(x, [y]) 
   @Post(':postId/comments')
   async addComment(
     @Param('postId') postId: string,
