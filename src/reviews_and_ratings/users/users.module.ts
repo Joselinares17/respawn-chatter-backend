@@ -5,7 +5,9 @@ import { UserService } from './user.service';
 import { UserController } from './users.controller';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'User', schema: UserSchema }])],
+  imports: [MongooseModule.forFeature([{ name: 'User', schema: UserSchema }],
+    'gameReviews'
+  )],
   providers: [UserService],
   controllers: [UserController],
   exports: [MongooseModule], // Exporta para que otros módulos puedan usarlo

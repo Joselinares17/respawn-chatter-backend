@@ -10,7 +10,8 @@ import { GameSchema } from 'src/reviews_and_ratings/games/game.schema';
     MongooseModule.forFeature([
       { name: 'Review', schema: ReviewSchema },
       { name: 'Game', schema: GameSchema },
-    ]),  // Registro del modelo de Mongoose
+    ],
+  'gameReviews'),  // Registro del modelo de Mongoose
   ],
   providers: [ReviewsService],
   controllers: [ReviewsController],

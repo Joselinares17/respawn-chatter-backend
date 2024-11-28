@@ -6,7 +6,9 @@ import { ResponseSchema } from './response.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Response', schema: ResponseSchema }]),
+    MongooseModule.forFeature([{ name: 'Response', schema: ResponseSchema }],
+      'gameReviews'
+    ),
   ],
   controllers: [ResponsesController],
   providers: [ResponsesService],

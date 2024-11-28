@@ -37,7 +37,9 @@ async function getKey(header: any): Promise<string> {
       }),
     }),
     // Configuración de Mongoose para el esquema de usuario
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }], 
+        'gameReviews'
+    ),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, UserService], // Asegúrate de tener los servicios necesarios

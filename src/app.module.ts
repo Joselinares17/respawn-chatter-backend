@@ -15,20 +15,38 @@ import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
+      envFilePath: './Datos.env'
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_FORUM'),
-      }),
+      useFactory: async (configService: ConfigService) => {
+        try {
+          const uri = configService.get<string>('FORUM_MONGO_URI');
+          if (!uri) {
+            throw new Error('FORUM_MONGO_URI no está configurado.');
+          }
+          return { uri };
+        } catch (error) {
+          console.error('Error al configurar la conexión a MongoDB:', error.message);
+          throw error;
+        }
+      },
       inject: [ConfigService],
       connectionName: 'forum',
     }),
-    MongooseModule.forRoot('mongodb+srv://admin:admin@clusterarquitecturasoft.4hnsp.mongodb.net/gameReviewsDB?retryWrites=true&w=majority&appName=ClusterArquitecturaSoftware'),
+    MongooseModule.forRoot('mongodb+srv://admin:admin@clusterarquitecturasoft.4hnsp.mongodb.net/gameReviewsDB?retryWrites=true&w=majority&appName=ClusterArquitecturaSoftware',
+      {
+        connectionName: 'gameReviews',
+      },
+    ),
     ReviewsModule,
     GamesModule,
     ForumModule,
+    ResponsesModule,
+    GoogleContentSafetyModule,
+    UsersModule,
+    AuthModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
@@ -43,11 +61,6 @@ import { AuthModule } from './auth/auth.module';
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,
     },
-    ResponsesModule,
-    ForumModule,
-    GoogleContentSafetyModule,
-    UsersModule,
-    AuthModule
   ],
 })
 export class AppModule {}

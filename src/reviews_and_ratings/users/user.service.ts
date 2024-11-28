@@ -7,7 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel('User') private readonly userModel: Model<UserDocument>,
+    @InjectModel('User', 'gameReviews') private readonly userModel: Model<UserDocument>,
   ) {}
 
   // Método para crear o actualizar un usuario en MongoDB
@@ -35,6 +35,7 @@ export class UserService {
 
 
   async findByEmail(email: string): Promise<UserDocument | null> {
+    console.log(email);
     return this.userModel.findOne({ email }).exec();
   }
  

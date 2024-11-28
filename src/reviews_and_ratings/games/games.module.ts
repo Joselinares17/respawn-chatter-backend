@@ -6,7 +6,9 @@ import { GameSchema } from './game.schema';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Game', schema: GameSchema }]),
+  imports: [MongooseModule.forFeature([{ name: 'Game', schema: GameSchema }],
+    'gameReviews'
+  ),
 HttpModule,
 ],
   controllers: [GamesController],

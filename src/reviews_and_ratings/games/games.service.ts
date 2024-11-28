@@ -10,7 +10,7 @@ import { Game } from './game.schema';  // Asegúrate de que el modelo de juego e
 @Injectable()
 export class GamesService {
   constructor(
-    @InjectModel('Game') private readonly gameModel: Model<GameDocument>,
+    @InjectModel('Game', 'gameReviews') private readonly gameModel: Model<GameDocument>,
     private readonly httpService: HttpService,
   ) {}
 

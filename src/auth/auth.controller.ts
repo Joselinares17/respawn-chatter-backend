@@ -15,6 +15,8 @@ export class AuthController {
     // Aquí se obtiene el token desde la cabecera Authorization
     const token = req.headers.authorization.split(' ')[1]; // Asumiendo que es Bearer <token>
 
+    console.log(token);
+
     try {
       const decodedToken = await this.authService.validateToken(token);
 

@@ -7,8 +7,8 @@ import { Game, GameDocument } from 'src/reviews_and_ratings/games/game.schema'; 
 @Injectable()
 export class ReviewsService {
   constructor(
-    @InjectModel('Review') private reviewModel: Model<ReviewDocument>,  // Modelo de reseña
-    @InjectModel('Game') private gameModel: Model<GameDocument>,      // Modelo de juego
+    @InjectModel('Review', 'gameReviews') private reviewModel: Model<ReviewDocument>,  // Modelo de reseña
+    @InjectModel('Game', 'gameReviews') private gameModel: Model<GameDocument>,      // Modelo de juego
   ) {}
 
   // Obtener todas las reseñas con los datos del juego

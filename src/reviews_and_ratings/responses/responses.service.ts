@@ -6,7 +6,7 @@ import { ResponseDocument } from './response.schema';
 @Injectable()
 export class ResponsesService {
   constructor(
-    @InjectModel('Response') private readonly responseModel: Model<ResponseDocument>,
+    @InjectModel('Response', 'gameReviews') private readonly responseModel: Model<ResponseDocument>,
   ) {}
 
   // Crear una nueva respuesta
