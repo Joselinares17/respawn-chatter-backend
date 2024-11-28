@@ -21,6 +21,7 @@ export class ReviewsService {
 
   // Obtener reseñas por usuario con datos del juego
   async getReviewsByUser(userId: string): Promise<ReviewDocument[]> {
+    console.log(userId);
     const reviews = await this.reviewModel
       .find({ userId })
       .populate('gameId') // Rellenamos con la información del juego

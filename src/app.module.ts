@@ -7,7 +7,10 @@ import { ReviewsModule } from 'src/reviews_and_ratings/reviews/reviews.module';
 import { ForumModule } from './forum/forum.module';
 import { GamesModule } from './reviews_and_ratings/games/games.module';
 import { CustomThrottlerGuard } from './forum/guards/custom-throttler.guard';
-
+import { ResponsesModule } from './reviews_and_ratings/responses/responses.module';
+import { UsersModule } from './reviews_and_ratings/users/users.module';
+import { GoogleContentSafetyModule } from './google-content-safety/google-content-safety.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -40,6 +43,11 @@ import { CustomThrottlerGuard } from './forum/guards/custom-throttler.guard';
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,
     },
+    ResponsesModule,
+    ForumModule,
+    GoogleContentSafetyModule,
+    UsersModule,
+    AuthModule
   ],
 })
 export class AppModule {}

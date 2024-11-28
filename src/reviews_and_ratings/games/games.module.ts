@@ -3,9 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { GamesController } from './games.controller';
 import { GamesService } from './games.service';
 import { GameSchema } from './game.schema';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Game', schema: GameSchema }])],
+  imports: [MongooseModule.forFeature([{ name: 'Game', schema: GameSchema }]),
+HttpModule,
+],
   controllers: [GamesController],
   providers: [GamesService],
 })
