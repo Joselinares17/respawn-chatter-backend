@@ -1,22 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model } from 'mongoose';
 import { Post } from './schemas/post.schema';
-import { Comment } from './schemas/comment.schema';
+import { Comment, Reply } from './schemas/comment.schema';
 import { CreateReplyDto } from './dtos/create-reply.dto';
-import { Types } from "mongoose";
+import { ContentModerationService } from './content-moderation.service';
+import { CreateCommentDto } from './dtos/create-comment.dto';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectModel(Post.name, 'forum') private readonly postModel: Model<Post>,
     @InjectModel(Comment.name, 'forum') private readonly commentModel: Model<Comment>,
+    private readonly contentModerationService : ContentModerationService
   ) {}
 
   // Crear un nuevo post
-  async createPost(createPostDto: any): Promise<Post> {
-    const post = new this.postModel(createPostDto);
-    return post.save();
+  async createPost(title: string, content: string, tags: string[]): Promise<{ post?: Post; error?: string }> {
+    const moderationResult = await this.contentModerationService.moderateContent([title, content, ...tags]);
+  
+    if (!moderationResult.isSafe) {
+      return { error: `El contenido no pasó la moderación. Categorías inseguras detectadas: ${moderationResult.unsafeCategories}` };
+    }
+  
+    const post = new this.postModel({ title, content, tags });
+    return { post: await post.save() };
   }
 
   // Obtener todos los posts con sus comentarios
@@ -49,28 +57,36 @@ export class PostService {
   
 
   // Agregar un comentario a un post
-  async addComment(postId: string, createCommentDto: any): Promise<Comment> {
-    const comment = new this.commentModel(createCommentDto);
-    const savedComment = await comment.save();
-
-    await this.postModel.findByIdAndUpdate(postId, {
-      $push: { comments: savedComment._id },
-    });
-
-    return savedComment;
+  async createComment(postId: string, request: CreateCommentDto): Promise<{ comment?: Comment; error?: string }> {
+    const { content, author } = request
+    const moderationResult = await this.contentModerationService.moderateContent([content]);
+  
+    if (!moderationResult.isSafe) {
+      return { error: `El comentario no pasó la moderación. Categorías inseguras detectadas: ${moderationResult.unsafeCategories}` };
+    }
+  
+    const comment = new this.commentModel({ postId, request});
+    return { comment: await comment.save() };
   }
 
   // Agregar una respuesta a un comentario
-  async addReply(commentId: string, createReplyDto: CreateReplyDto): Promise<Comment> {
-    const comment = await this.commentModel.findById(commentId);
+  async createReply(commentId: string, request: CreateReplyDto): Promise<{ reply?: Reply; error?: string }> {
+    const { content, author } = request
+
+    const moderationResult = await this.contentModerationService.moderateContent([content]);
   
-    if (!comment) {
-      throw new Error('Comment not found');
+    if (!moderationResult.isSafe) {
+      return { error: `La respuesta no pasó la moderación. Categorías inseguras detectadas: ${moderationResult.unsafeCategories}` };
     }
   
-    // Asegurar que el objeto incluye los campos requeridos
-    comment.replies.push(createReplyDto);
-    return comment.save();
+    // Crear la respuesta si el contenido es seguro, incluyendo todas las propiedades requeridas
+    const reply = { content, author, votes: 0 }; // Aseguramos que 'votes' tenga un valor inicial
+    await this.commentModel.updateOne(
+      { _id: commentId },
+      { $push: { replies: reply } }
+    );
+  
+    return { reply };
   }
 
   // Votar un post
