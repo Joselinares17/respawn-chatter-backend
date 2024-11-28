@@ -34,14 +34,19 @@ export class PostService {
 
   // Obtener un post en particular en base a su id
   async getPostById(postId: string): Promise<Post> {
-    const postExist = this.postModel.findById(postId);
-
-    if(!postExist) {
-      throw Error(`${postId} does not exits`)
-    }
-
-    return postExist.populate('comments').exec();
+  if (!postId) {
+    throw new Error('Post ID is required');
   }
+  
+  const postExist = await this.postModel.findById(postId);
+
+  if (!postExist) {
+    throw new Error(`Post with ID ${postId} does not exist`);
+  }
+
+  return postExist.populate('comments')
+}
+
 
   // Obtener todos los comentarios de un post usando los id's del arreglo de comments. Creando así una nueva lista para enviarlo.
   async getAllCommentsByPost(postId: string): Promise<Comment[]> {
