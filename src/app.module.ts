@@ -22,9 +22,9 @@ import { AuthModule } from './auth/auth.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         try {
-          const uri = configService.get<string>('FORUM_MONGO_URI');
+          const uri = configService.get<string>('MONGODB_FORUM');
           if (!uri) {
-            throw new Error('FORUM_MONGO_URI no está configurado.');
+            throw new Error('FORUM_MONGO no está configurado.');
           }
           return { uri };
         } catch (error) {
