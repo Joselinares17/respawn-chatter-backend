@@ -129,4 +129,42 @@ export class PostController {
       message: 'Post eliminado exitosamente',
     };
   }
+
+  @Delete(':postId/comments/:commentId')
+  async deleteComment(@Param('postId') postId: string, @Param('commentId') commentId: string) {
+    const result = await this.postService.deleteComment(postId, commentId);
+
+    if (result.error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: result.error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return {
+      message: 'Comentario eliminado exitosamente.',
+    };
+  }
+
+  @Delete(':postId/comments/:commentId/replies/:replyId')
+  async deleteReply(@Param('postId') postId: string, @Param('commentId') commentId: string, @Param('replyId') replyId: string) {
+    const result = await this.postService.deleteReply(commentId, replyId);
+
+    if (result.error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: result.error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return {
+      message: 'Respuesta eliminada exitosamente.',
+    };
+  }
 }

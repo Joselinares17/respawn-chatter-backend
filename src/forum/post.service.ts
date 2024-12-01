@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Post } from './schemas/post.schema';
 import { Comment, Reply } from './schemas/comment.schema';
 import { CreateReplyDto } from './dtos/create-reply.dto';
@@ -75,23 +75,33 @@ export class PostService {
   }
 
   // Agregar una respuesta a un comentario
-  async createReply(commentId: string, request: CreateReplyDto): Promise<{ reply?: Reply; error?: string }> {
-    const { content, author } = request
-
-    const moderationResult = await this.contentModerationService.moderateContent([content]);
+    async createReply(commentId: string, request: CreateReplyDto): Promise<{ reply?: Reply; error?: string }> {
+      const { content, author } = request;
   
-    if (!moderationResult.isSafe) {
-      return { error: `La respuesta no pasó la moderación. Categorías inseguras detectadas: ${moderationResult.unsafeCategories}` };
+      const moderationResult = await this.contentModerationService.moderateContent([content]);
+  
+      if (!moderationResult.isSafe) {
+        return { error: `La respuesta no pasó la moderación. Categorías inseguras detectadas: ${moderationResult.unsafeCategories}` };
+      }
+  
+      const comment = await this.commentModel.findById(commentId);
+  
+      if (!comment) {
+        return { error: `Comentario con ID ${commentId} no encontrado` };
+      }
+  
+      const reply: Reply = {
+        _id: new Types.ObjectId,
+        content,
+        author,
+        votes: 0,
+      };
+  
+      comment.replies.push(reply);
+      await comment.save();
+  
+      return { reply };
     }
-  
-    const reply = { content, author, votes: 0 }; 
-    await this.commentModel.updateOne(
-      { _id: commentId },
-      { $push: { replies: reply } }
-    );
-  
-    return { reply };
-  }
 
   // Votar un post
   async votePost(postId: string, direction: 'up' | 'down'): Promise<Post> {
@@ -164,4 +174,52 @@ export class PostService {
       return { error: `Error al eliminar el post: ${error.message}` };
     }
   }
+
+  // Eliminar un comentario
+  async deleteComment(postId: string, commentId: string): Promise<{ error?: string }> {
+    try {
+      // Eliminar el comentario
+      const comment = await this.commentModel.findByIdAndDelete(commentId);
+      
+      if (!comment) {
+        return { error: `Comentario con ID ${commentId} no encontrado` };
+      }
+
+      // Eliminar el comentario de la lista de comentarios del post
+      await this.postModel.findByIdAndUpdate(
+        postId,
+        { $pull: { comments: commentId } }
+      );
+
+      return {};
+    } catch (error) {
+      return { error: `Error al eliminar el comentario: ${error.message}` };
+    }
+  }
+
+  // Eliminar una respuesta dentro de un comentario
+  async deleteReply(commentId: string, replyId: string): Promise<{ error?: string }> {
+    try {
+      // Encontrar el comentario y eliminar la respuesta
+      const comment = await this.commentModel.findById(commentId);
+
+      if (!comment) {
+        return { error: `Comentario con ID ${commentId} no encontrado` };
+      }
+
+      const replyIndex = comment.replies.findIndex(reply => reply._id.toString() === replyId);
+
+      if (replyIndex === -1) {
+        return { error: `Respuesta con ID ${replyId} no encontrada` };
+      }
+
+      comment.replies.splice(replyIndex, 1);
+      await comment.save();
+
+      return {};
+    } catch (error) {
+      return { error: `Error al eliminar la respuesta: ${error.message}` };
+    }
+  }
 }
+

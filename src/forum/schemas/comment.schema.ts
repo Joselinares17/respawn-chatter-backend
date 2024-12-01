@@ -1,8 +1,13 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 
-@Schema()
+@Schema({
+  timestamps: true,
+})
 export class Reply {
+  @Prop({ type: Types.ObjectId, default: () => new Types.ObjectId() })
+  _id: Types.ObjectId;
+
   @Prop({ type: String, required: true })
   content: string;
 
@@ -18,7 +23,7 @@ export const ReplySchema = SchemaFactory.createForClass(Reply);
 @Schema({
   timestamps: true,
 })
-export class Comment {
+export class Comment extends Document {
   @Prop({ type: String, required: true })
   content: string;
 
