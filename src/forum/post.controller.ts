@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch,
+import { Controller, Get, Post, Body, Param, Patch, Delete,
   HttpException, HttpStatus } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreateCommentDto } from './dtos/create-comment.dto';
@@ -20,7 +20,6 @@ export class PostController {
     const result = await this.postService.createPost(title, content, tags);
 
     if (result.error) {
-      // Lanzar un error con mensaje personalizado para el usuario
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
@@ -30,7 +29,6 @@ export class PostController {
       );
     }
 
-    // Retornar el post creado si todo es correcto
     return {
       message: 'Post creado exitosamente.',
       post: result.post,
@@ -59,7 +57,6 @@ export class PostController {
     const result = await this.postService.createComment(postId, createCommentDto);
 
     if (result.error) {
-      // Lanzar un error con mensaje personalizado para el usuario
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
@@ -69,7 +66,6 @@ export class PostController {
       );
     }
 
-    // Retornar el post creado si todo es correcto
     return {
       message: 'Comment creado exitosamente.',
       post: result.comment,
@@ -94,7 +90,6 @@ export class PostController {
     const result = await this.postService.createReply(commentId, createReplyDto);
 
     if (result.error) {
-      // Lanzar un error con mensaje personalizado para el usuario
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
@@ -104,7 +99,6 @@ export class PostController {
       );
     }
 
-    // Retornar el post creado si todo es correcto
     return {
       message: 'Reply creado exitosamente.',
       post: result.reply,
@@ -115,5 +109,24 @@ export class PostController {
   @Patch(':id/views')
   async incrementViews(@Param('id') id: string) {
     return this.postService.incrementViews(id);
+  }
+
+  @Delete(':id')
+  async deletePost(@Param('id') id: string) {
+    const result = await this.postService.deletePost(id);
+
+    if (result.error) {
+      throw new HttpException( 
+        { 
+          status: HttpStatus.BAD_REQUEST, 
+          error: result.error, 
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return {
+      message: 'Post eliminado exitosamente',
+    };
   }
 }

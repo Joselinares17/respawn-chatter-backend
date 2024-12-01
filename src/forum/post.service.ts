@@ -84,8 +84,7 @@ export class PostService {
       return { error: `La respuesta no pasó la moderación. Categorías inseguras detectadas: ${moderationResult.unsafeCategories}` };
     }
   
-    // Crear la respuesta si el contenido es seguro, incluyendo todas las propiedades requeridas
-    const reply = { content, author, votes: 0 }; // Aseguramos que 'votes' tenga un valor inicial
+    const reply = { content, author, votes: 0 }; 
     await this.commentModel.updateOne(
       { _id: commentId },
       { $push: { replies: reply } }
@@ -105,14 +104,12 @@ export class PostService {
   }
 
   async incrementViews(postId: string): Promise<Post> {
-    // Busca y actualiza el post incrementando el campo 'views'
     const updatedPost = await this.postModel.findByIdAndUpdate(
-      postId, // ID del post
-      { $inc: { views: 1 } }, // Incrementar el campo 'views' en 1
-      { new: true }, // Devolver el documento actualizado
+      postId, 
+      { $inc: { views: 1 } }, 
+      { new: true }, 
     );
 
-    // Si el post no existe, lanzar una excepción
     if (!updatedPost) {
       throw new Error(`Post con ID ${postId} no encontrado`);
     }
@@ -149,5 +146,22 @@ export class PostService {
     comment.replies[replyIndex].votes += increment;
 
     return comment.save();
+  }
+
+  // Eliminar un post
+  async deletePost(postId: string): Promise<{ error?: string }> {
+    try {
+      const post = await this.postModel.findByIdAndDelete(postId);
+      
+      if (!post) {
+        return { error: `Post con ID ${postId} no encontrado` };
+      }
+
+      await this.commentModel.deleteMany({ postId });
+
+      return {};
+    } catch (error) {
+      return { error: `Error al eliminar el post: ${error.message}` };
+    }
   }
 }
