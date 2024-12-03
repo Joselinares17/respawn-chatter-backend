@@ -5,8 +5,8 @@ import { AzureKeyCredential } from "@azure/core-auth";
 @Injectable()
 export class AzureContentSafetyService {
   private readonly client;
-  API_KEY = process.env.AZURE_API_KEY;
-  ENDPOINT = process.env.AZURE_ENDPOINT;
+  API_KEY = '9l09QapgYoU1S2zBEhMnpgOZ76SkEjdctgi1RSrOTrIGAtgzYLCmJQQJ99AJAC1i4TkXJ3w3AAAHACOG1rsr';
+  ENDPOINT = 'https://ia-content-moderator-lab.cognitiveservices.azure.com/';
 
   constructor() {
     this.client = ContentSafetyClient(this.ENDPOINT, new AzureKeyCredential(this.API_KEY));
