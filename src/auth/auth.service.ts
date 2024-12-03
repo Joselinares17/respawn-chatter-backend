@@ -29,6 +29,7 @@ export class AuthService {
           if (err) {
             return reject(new UnauthorizedException('Invalid token'));
           }
+          console.log('La decodificación es:', decoded);
           resolve(decoded);
         });
       });

@@ -12,7 +12,8 @@ export class ResponsesService {
   // Crear una nueva respuesta
   async createResponse(data: Partial<ResponseDocument>): Promise<ResponseDocument> {
     const response = new this.responseModel(data);
-    return response.save();
+    await response.save();
+    return response;
   }
 
   // Obtener respuestas por ID de reseña o respuesta
@@ -33,8 +34,9 @@ export class ResponsesService {
     if (parentResponseId) {
       filter.parentResponseId = parentResponseId;
     }
-  
     // Realizar la consulta con el filtro dinámico
-    return this.responseModel.find(filter).populate('userId', 'username email').exec();
+    const responses = this.responseModel.find(filter).populate('userId', 'username email').exec();
+
+    return responses;
   }
 }

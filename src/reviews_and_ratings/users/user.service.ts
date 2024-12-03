@@ -3,11 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDocument } from './user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel('User', 'gameReviews') private readonly userModel: Model<UserDocument>,
+    private readonly cacheService: CacheService,
   ) {}
 
   // Método para crear o actualizar un usuario en MongoDB
@@ -27,7 +29,7 @@ export class UserService {
         username: createUserDto.username,
         createdAt: new Date(createUserDto.createdAt), // Convertimos la fecha si es necesario
       });
-      await user.save();
+      user = await user.save();
     }
   
     return user;
@@ -35,8 +37,24 @@ export class UserService {
 
 
   async findByEmail(email: string): Promise<UserDocument | null> {
-    console.log(email);
-    return this.userModel.findOne({ email }).exec();
+    const cacheKey = `user:${email}`;
+
+     // Intentamos obtener el usuario desde el caché
+     const cachedUser = await this.cacheService.getCache(cacheKey);
+     const usuario = cachedUser as UserDocument;
+     if (usuario) {
+       console.log('Usuario encontrado en caché');
+       console.log('Este es el usuario encontrado en caché:', usuario);
+       return usuario;  // Devolvemos el usuario desde el caché
+     }
+
+    const user = this.userModel.findOne({ email }).exec();
+
+    if (user) {
+      await this.cacheService.setCache(cacheKey, user, 3600);  // TTL de 1 hora
+    }
+
+    return user;
   }
  
   

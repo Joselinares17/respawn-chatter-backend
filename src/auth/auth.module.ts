@@ -8,6 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from 'src/reviews_and_ratings/users/user.schema';
 import { UserService } from 'src/reviews_and_ratings/users/user.service';
 import * as jwksClient from 'jwks-rsa';
+import { CacheService } from 'src/cache/cache.service';
 
 // Configuración del cliente JWKS para obtener la clave pública de Auth0
 const client = jwksClient({
@@ -42,7 +43,7 @@ async function getKey(header: any): Promise<string> {
     ),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, UserService], // Asegúrate de tener los servicios necesarios
+  providers: [AuthService, JwtStrategy, UserService, CacheService], // Asegúrate de tener los servicios necesarios
   exports: [UserService], // Exporta el servicio si es necesario en otros módulos
 })
 export class AuthModule {}

@@ -12,12 +12,15 @@ export class ReviewsService {
   ) {}
 
   // Obtener todas las reseñas con los datos del juego
-  async getAllReviews(): Promise<ReviewDocument[]> {
-    return this.reviewModel
+  async getAllReviews(): Promise<ReviewDocument[]> {   
+    
+    const reviews = this.reviewModel
       .find()
       .populate('gameId') // Esto hará que se rellene la información del juego relacionado
       .exec();
-  }
+
+    return reviews;
+    }
 
   // Obtener reseñas por usuario con datos del juego
   async getReviewsByUser(userId: string): Promise<ReviewDocument[]> {
@@ -26,30 +29,43 @@ export class ReviewsService {
       .find({ userId })
       .populate('gameId') // Rellenamos con la información del juego
       .exec();
+
+    console.log('Estas son las reseñas:', reviews);
+
     return reviews;
   }
 
   async getReviewsByGame(gameId: string): Promise<ReviewDocument[]> {
+    // Si no está en caché, obtenemos desde la base de datos
     const reviews = await this.reviewModel
       .find({ gameId })
-      .populate('gameId') // Rellenamos con la información del juego
+      .populate('gameId')  // Rellenamos con la información del juego
       .exec();
+
+    console.log('Estas son las reviews', reviews);
     return reviews;
   }
 
   // Obtener una reseña por ID con datos del juego
   async getReviewById(id: string): Promise<ReviewDocument> {
-    return this.reviewModel
+    const review = await this.reviewModel
       .findById(id)
       .populate('gameId') // Rellenamos con la información del juego
       .exec();
+    
+      if (!review) {
+        throw new Error('Reseña no encontrada');
+      }
+  
+      return review;
   }
 
   // Crear una nueva reseña
   async createReview(createReviewDto: any): Promise<ReviewDocument> {
     const createdReview = new this.reviewModel(createReviewDto);
     console.log(createdReview);
-    return createdReview.save();
+    const savedReview = await createdReview.save();
+    return savedReview;
   }
 
 
@@ -60,6 +76,7 @@ export class ReviewsService {
     if (!updatedReview) {
       throw new Error('Reseña no encontrada');
     }
+
     return updatedReview;
   }
 
@@ -70,6 +87,7 @@ export class ReviewsService {
       throw new Error('Reseña no encontrada');
     }
     await this.reviewModel.findByIdAndDelete(id);
+
     return { message: 'Reseña eliminada exitosamente' };
   }
 
