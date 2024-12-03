@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { GameDocument } from './game.schema';
 import { GameDto } from './games.dto';
+import { GameGraphQL } from 'src/graphql/game.graphql';
 
 @Controller('games')
 export class GamesController {
@@ -34,7 +35,7 @@ export class GamesController {
 
   // Método GET para obtener un juego por su ID
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<GameDocument> {
+  async findOne(@Param('id') id: string): Promise<GameGraphQL> {
     return this.gamesService.findOne(id);
   }
 }

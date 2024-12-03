@@ -21,6 +21,8 @@ export class ResponsesService {
     parentReviewId?: string,
     parentResponseId?: string,
   ) {
+    console.log('Este es el id de la reseña padre:',parentReviewId);
+    console.log('Este es el id de la respuesta padre:',parentResponseId);
     // Construir el filtro dinámico según los parámetros
     const filter: FilterQuery<ResponseDocument> = {};
   

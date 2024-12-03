@@ -1,9 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-
-import { scheduleSyncGames } from './reviews_and_ratings/games/cron/syncGames'
+import { GraphQLFactory } from '@nestjs/graphql';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import { scheduleSyncGames } from './reviews_and_ratings/games/cron/syncGames';
 
 import * as dotenv from 'dotenv';
+import * as express from 'express';
+
 dotenv.config();
 
 async function bootstrap() {

@@ -7,6 +7,7 @@ import { GameDocument } from './game.schema';
 import { GameDto } from './games.dto';
 import { Game } from './game.schema';  // Asegúrate de que el modelo de juego esté importado
 import { CacheService } from 'src/cache/cache.service';
+import { GameGraphQL } from 'src/graphql/game.graphql';
 
 @Injectable()
 export class GamesService {
@@ -19,7 +20,8 @@ export class GamesService {
   // Métodos CRUD existentes
   async create(createGameDto: GameDto): Promise<GameDocument> {
     const createdGame = new this.gameModel(createGameDto);
-    return createdGame.save();
+    const savedGame = await createdGame.save();
+    return savedGame;
   }
 
   async findAll(page: number = 1, limit: number = 10): Promise<any> {
@@ -40,7 +42,7 @@ export class GamesService {
     const totalGames = await this.gameModel.countDocuments();  // Contamos todos los juegos
 
     const result = {
-      games,
+      games: games.map(this.mapToGameGraphQL),
       totalPages: Math.ceil(totalGames / limit),  // Calculamos el total de páginas
       currentPage: page,
     };
@@ -50,7 +52,7 @@ export class GamesService {
     return result;
   }
 
-  async findOne(id: string): Promise<GameDocument> {
+  async findOne(id: string): Promise<GameGraphQL> {
     const cacheKey = `game:${id}`;  // Clave única para cada juego usando el _id
     // Intentar obtener los datos desde el caché
     const cachedGame = await this.cacheService.getCache(cacheKey);
@@ -58,7 +60,7 @@ export class GamesService {
     if (cachedGame) {
       // Si el juego está en caché, devolverlo
       console.log('Juego desde caché');
-      return cachedGame as GameDocument;
+      return cachedGame as GameGraphQL;
     }
 
       // Si no está en caché, obtener el juego desde la base de datos
@@ -69,9 +71,22 @@ export class GamesService {
       }
 
       // Guardar el juego en caché por 1 hora (3600 segundos)
-      await this.cacheService.setCache(cacheKey, game, 3600);
+      await this.cacheService.setCache(cacheKey, this.mapToGameGraphQL(game), 3600);
 
-      return game;
+      return this.mapToGameGraphQL(game);
+  }
+
+  // Método para mapear los datos de Mongoose a GraphQL
+  private mapToGameGraphQL(game: GameDocument): GameGraphQL {
+    return {
+      _id: game._id.toString(), // MongoDB usa un tipo ObjectId, convertimos a string
+      title: game.title,
+      releaseYear: game.releaseYear,
+      genre: game.genre,
+      platforms: game.platforms,
+      createdAt: game.createdAt,
+      image: game.image || null,
+    };
   }
 
   // Nuevo método para sincronizar los juegos desde la API

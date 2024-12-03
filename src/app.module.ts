@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { GraphqlModule } from './graphql/graphql.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
@@ -11,6 +12,8 @@ import { ResponsesModule } from './reviews_and_ratings/responses/responses.modul
 import { UsersModule } from './reviews_and_ratings/users/users.module';
 import { GoogleContentSafetyModule } from './google-content-safety/google-content-safety.module';
 import { AuthModule } from './auth/auth.module';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+
 
 @Module({
   imports: [
@@ -47,11 +50,12 @@ import { AuthModule } from './auth/auth.module';
     GoogleContentSafetyModule,
     UsersModule,
     AuthModule,
+    GraphqlModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
           ttl: 60 * 1000, // Tiempo de vida en milisegundos
-          limit: 10, // Número máximo de solicitudes permitidas por minuto
+          limit: 1000, // Número máximo de solicitudes permitidas por minuto
         },
       ],
     }),

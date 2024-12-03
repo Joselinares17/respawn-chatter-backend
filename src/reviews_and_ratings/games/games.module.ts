@@ -5,6 +5,7 @@ import { GamesService } from './games.service';
 import { GameSchema } from './game.schema';
 import { HttpModule } from '@nestjs/axios';
 import { CacheService } from 'src/cache/cache.service';
+import { GamesResolver } from './games.resolver';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'Game', schema: GameSchema }],
@@ -13,6 +14,6 @@ import { CacheService } from 'src/cache/cache.service';
 HttpModule,
 ],
   controllers: [GamesController],
-  providers: [GamesService, CacheService],
+  providers: [GamesService, CacheService, GamesResolver],
 })
 export class GamesModule {}
