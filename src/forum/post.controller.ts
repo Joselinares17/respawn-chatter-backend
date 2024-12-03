@@ -16,9 +16,11 @@ export class PostController {
     @Body('title') title: string,
     @Body('content') content: string,
     @Body('tags') tags: string[],
+    @Body('author') author: string,
+    @Body('authorAvatar') authorAvatar: string,
   ) {
-    const result = await this.postService.createPost(title, content, tags);
-
+    const result = await this.postService.createPost(title, content, tags, author, authorAvatar);
+  
     if (result.error) {
       throw new HttpException(
         {
@@ -28,13 +30,13 @@ export class PostController {
         HttpStatus.BAD_REQUEST,
       );
     }
-
+  
     return {
       message: 'Post creado exitosamente.',
       post: result.post,
     };
   }
-
+  
   // 2. Obtener todos los posts
   @Get()
   //@Throttle({ default: { limit: 3, ttl: 60000 } })

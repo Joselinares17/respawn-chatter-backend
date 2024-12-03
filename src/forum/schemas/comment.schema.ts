@@ -23,7 +23,7 @@ export const ReplySchema = SchemaFactory.createForClass(Reply);
 @Schema({
   timestamps: true,
 })
-export class Comment extends Document {
+export class Comment {
   @Prop({ type: String, required: true })
   content: string;
 

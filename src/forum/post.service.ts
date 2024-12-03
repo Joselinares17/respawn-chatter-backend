@@ -16,14 +16,14 @@ export class PostService {
   ) {}
 
   // Crear un nuevo post
-  async createPost(title: string, content: string, tags: string[]): Promise<{ post?: Post; error?: string }> {
+  async createPost(title: string, content: string, tags: string[], author: string, authorAvatar: string): Promise<{ post?: Post; error?: string }> {
     const moderationResult = await this.contentModerationService.moderateContent([title, content, ...tags]);
-  
+
     if (!moderationResult.isSafe) {
       return { error: `El contenido no pasó la moderación. Categorías inseguras detectadas: ${moderationResult.unsafeCategories}` };
     }
-  
-    const post = new this.postModel({ title, content, tags });
+
+    const post = new this.postModel({ title, content, tags, author, authorAvatar });
     return { post: await post.save() };
   }
 
@@ -34,19 +34,18 @@ export class PostService {
 
   // Obtener un post en particular en base a su id
   async getPostById(postId: string): Promise<Post> {
-  if (!postId) {
-    throw new Error('Post ID is required');
+    if (!postId) {
+      throw new Error('Post ID is required');
+    }
+
+    const postExist = await this.postModel.findById(postId);
+
+    if (!postExist) {
+      throw new Error(`Post with ID ${postId} does not exist`);
+    }
+
+    return postExist.populate('comments');
   }
-  
-  const postExist = await this.postModel.findById(postId);
-
-  if (!postExist) {
-    throw new Error(`Post with ID ${postId} does not exist`);
-  }
-
-  return postExist.populate('comments')
-}
-
 
   // Obtener todos los comentarios de un post usando los id's del arreglo de comments. Creando así una nueva lista para enviarlo.
   async getAllCommentsByPost(postId: string): Promise<Comment[]> {
@@ -70,7 +69,7 @@ export class PostService {
       return { error: `El comentario no pasó la moderación. Categorías inseguras detectadas: ${moderationResult.unsafeCategories}` };
     }
   
-    const comment = new this.commentModel({ postId, request});
+    const comment = new this.commentModel({ postId, content, author});
     return { comment: await comment.save() };
   }
 

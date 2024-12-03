@@ -6,7 +6,7 @@ export type PostDocument = Post & Document;
 @Schema({
   timestamps: true
 })
-export class Post extends Document {
+export class Post {
   @Prop({ type: String, required: true })
   title: string;
   @Prop({ type: String, required: true })
